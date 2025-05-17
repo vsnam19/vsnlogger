@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     try {
         // Initialize logging system with file and console output
         VSN_INIT_LOGGING_FULL("app_a", "/var/log/app_a",
-                              vsn::logger::LogLevel::TRACE);
+                              vsn::logger::E_LogLevel::E_TRACE);
 
         VSN_INFO("Application A starting up");
 

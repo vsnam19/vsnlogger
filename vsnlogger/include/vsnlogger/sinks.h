@@ -1,45 +1,94 @@
+/**
+ * @file sinks.h
+ * @brief Output destination management for VSNLogger
+ *
+ * @details
+ * This component provides factory functions for creating logging output
+ * destinations with MISRA C++ compliance for safety-critical applications.
+ *
+ * @author VSNLogger Contributors
+ * @version 1.0.0
+ */
+
 #pragma once
-
-#include <spdlog/sinks/sink.h>
-#include <spdlog/spdlog.h>
-
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
 
-namespace vsn::logger {
+#include "error_codes.h"
+
+/* Forward declaration of spdlog sink */
+namespace spdlog {
+namespace sinks {
+class sink;
+}
+}  // namespace spdlog
+
+namespace vsn {
+namespace logger {
 namespace sinks {
 
 /**
- * Create a console sink
+ * @brief Create a console sink
+ *
+ * @param[in] colored Enable colorized output
+ * @return Pointer to created sink or nullptr on failure
  */
-std::shared_ptr<spdlog::sinks::sink> create_console_sink(bool colored = true);
+std::shared_ptr<spdlog::sinks::sink> CreateConsoleSink(bool colored);
 
 /**
- * Create a file sink
+ * @brief Create a file sink
+ *
+ * @param[in] filename Path to output file
+ * @param[in] rotate Enable log rotation
+ * @param[in] maxSize Maximum file size before rotation
+ * @param[in] maxFiles Maximum number of rotated files to keep
+ * @return Pointer to created sink or nullptr on failure
  */
-std::shared_ptr<spdlog::sinks::sink> create_file_sink(
-    const std::string& filename, bool rotate = true,
-    size_t max_size = 10 * 1024 * 1024,  // 10 MB
-    size_t max_files = 5);
+std::shared_ptr<spdlog::sinks::sink> CreateFileSink(const std::string& filename,
+                                                    bool rotate,
+                                                    std::size_t maxSize,
+                                                    std::size_t maxFiles);
 
 /**
- * Create a syslog sink
+ * @brief Create a syslog sink
+ *
+ * @param[in] ident Application identifier for syslog
+ * @param[in] syslogOption Syslog options
+ * @param[in] syslogFacility Syslog facility
+ * @param[in] enableFormatting Enable message formatting
+ * @return Pointer to created sink or nullptr on failure
  */
-std::shared_ptr<spdlog::sinks::sink> create_syslog_sink(
-    std::string ident = "vsnlogger", int syslog_option = 0,
-    int syslog_facility = 0, bool enable_formatting = true);
+std::shared_ptr<spdlog::sinks::sink> CreateSyslogSink(
+    std::string ident, std::int32_t syslogOption, std::int32_t syslogFacility,
+    bool enableFormatting);
 
 /**
- * Create a null sink (discards all messages)
+ * @brief Create a null sink (discards all messages)
+ *
+ * @return Pointer to created sink or nullptr on failure
  */
-std::shared_ptr<spdlog::sinks::sink> create_null_sink();
+std::shared_ptr<spdlog::sinks::sink> CreateNullSink(void);
 
 /**
- * Create a multi-sink
+ * @brief Create a multi-sink with multiple outputs
+ *
+ * @param[in] console Enable console output
+ * @param[in] logFile Path to log file (empty to disable)
+ * @param[in] syslog Enable syslog output
+ * @return Vector of created sinks
  */
-std::vector<std::shared_ptr<spdlog::sinks::sink>> create_multi_sink(
-    bool console = true, const std::string& log_file = "", bool syslog = false);
+std::vector<std::shared_ptr<spdlog::sinks::sink>> CreateMultiSink(
+    bool console, const std::string& logFile, bool syslog);
 
-}  // namespace sinks
-}  // namespace vsn::logger
+/**
+ * @brief Get current sink allocation count
+ *
+ * @return Number of active sink allocations
+ */
+std::uint32_t GetSinkAllocationCount(void);
+
+} /* namespace sinks */
+} /* namespace logger */
+} /* namespace vsn */

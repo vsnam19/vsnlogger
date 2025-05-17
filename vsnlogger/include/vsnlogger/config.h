@@ -1,65 +1,122 @@
+/**
+ * @file config.h
+ * @brief Configuration management for VSNLogger
+ *
+ * @details
+ * This component provides configuration storage and retrieval mechanisms
+ * with MISRA C++ compliance for safety-critical applications.
+ *
+ * @author VSNLogger Contributors
+ * @version 1.0.0
+ */
+
 #pragma once
 
+#include <cstdint>
 #include <map>
-#include <memory>
 #include <string>
 
-namespace vsn::logger {
+#include "error_codes.h"
+
+namespace vsn {
+namespace logger {
 
 /**
- * Configuration options for the logging system
+ * @brief Configuration options for the logging system
  */
-class Config {
+class LogConfig {
    public:
     /**
-     * Singleton instance accessor
+     * @brief Singleton instance accessor
+     *
+     * @return Reference to configuration instance
      */
-    static Config& instance();
+    static LogConfig& GetInstance(void);
 
     /**
-     * Load configuration from file
+     * @brief Load configuration from file
+     *
+     * @param[in] configFile Path to configuration file
+     * @return Operation result code
      */
-    bool load_from_file(const std::string& config_file = "/etc/vsnlogger.conf");
+    E_Result LoadFromFile(const std::string& configFile);
 
     /**
-     * Load configuration from environment variables
+     * @brief Load configuration from environment variables
+     *
+     * @return Operation result code
      */
-    bool load_from_env();
+    E_Result LoadFromEnv(void);
 
     /**
-     * Get string configuration value
+     * @brief Get string configuration value
+     *
+     * @param[in] section Configuration section identifier
+     * @param[in] key Configuration key
+     * @param[in] defaultValue Value to return if key not found
+     * @return Configuration value or default
      */
-    std::string get_string(const std::string& section, const std::string& key,
-                           const std::string& default_value = "");
+    std::string GetString(const std::string& section, const std::string& key,
+                          const std::string& defaultValue);
 
     /**
-     * Get integer configuration value
+     * @brief Get integer configuration value
+     *
+     * @param[in] section Configuration section identifier
+     * @param[in] key Configuration key
+     * @param[in] defaultValue Value to return if key not found
+     * @return Configuration value or default
      */
-    int get_int(const std::string& section, const std::string& key,
-                int default_value = 0);
+    std::int32_t GetInt32(const std::string& section, const std::string& key,
+                          std::int32_t defaultValue);
 
     /**
-     * Get boolean configuration value
+     * @brief Get boolean configuration value
+     *
+     * @param[in] section Configuration section identifier
+     * @param[in] key Configuration key
+     * @param[in] defaultValue Value to return if key not found
+     * @return Configuration value or default
      */
-    bool get_bool(const std::string& section, const std::string& key,
-                  bool default_value = false);
+    bool GetBool(const std::string& section, const std::string& key,
+                 bool defaultValue);
 
     /**
-     * Set configuration value
+     * @brief Set configuration value
+     *
+     * @param[in] section Configuration section identifier
+     * @param[in] key Configuration key
+     * @param[in] value Configuration value to set
+     * @return Operation result code
      */
-    void set(const std::string& section, const std::string& key,
-             const std::string& value);
+    E_Result Set(const std::string& section, const std::string& key,
+                 const std::string& value);
 
    private:
-    // Private constructor for singleton
-    Config();
+    /** Maximum number of configuration sections */
+    static constexpr std::uint16_t k_maxSections = 32U;
 
-    // Disable copy and assignment
-    Config(const Config&) = delete;
-    Config& operator=(const Config&) = delete;
+    /** Maximum number of configuration entries per section */
+    static constexpr std::uint16_t k_maxEntriesPerSection = 64U;
 
-    // Configuration storage
-    std::map<std::string, std::map<std::string, std::string>> config_data_;
+    /** Maximum key length in characters */
+    static constexpr std::uint16_t k_maxKeyLength = 64U;
+
+    /** Maximum value length in characters */
+    static constexpr std::uint16_t k_maxValueLength = 256U;
+
+    /**
+     * @brief Private constructor for singleton
+     */
+    LogConfig(void);
+
+    /* Disable copy and assignment */
+    LogConfig(const LogConfig&) = delete;
+    LogConfig& operator=(const LogConfig&) = delete;
+
+    /** Configuration storage */
+    std::map<std::string, std::map<std::string, std::string>> m_configData;
 };
 
-}  // namespace vsn::logger
+} /* namespace logger */
+} /* namespace vsn */
