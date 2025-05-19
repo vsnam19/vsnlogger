@@ -27,14 +27,11 @@ void process_vector(const std::vector<int>& data) {
 int main() {
     try {
         // Initialize logging with JSON format for structured logging
-        vsn::logger::Logger::initialize("app_b", "/var/log/app_b",
-                                        vsn::logger::LogLevel::INFO);
+        vsn::logger::Logger::Initialize("app_b", "/var/log/app_b",
+                                        vsn::logger::E_LogLevel::E_INFO);
 
         // Set pattern for JSON formatted logs
-        auto logger = vsn::logger::Logger::default_logger()->native_handle();
-        logger->set_pattern(
-            "{\"timestamp\":\"%Y-%m-%dT%H:%M:%S.%fZ\",\"level\":\"%^%l%$\","
-            "\"app\":\"app_b\",\"message\":\"%v\"}");
+        auto logger = vsn::logger::Logger::GetDefaultLogger()->GetNativeHandle();
 
         VSN_INFO("Application B initialized with JSON logging");
 
@@ -64,7 +61,7 @@ int main() {
         }
 
         VSN_INFO("Application B shutting down");
-        vsn::logger::Logger::shutdown();
+        vsn::logger::Logger::Shutdown();
 
         return 0;
     } catch (const std::exception& e) {
