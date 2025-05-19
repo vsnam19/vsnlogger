@@ -26,11 +26,16 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <cstring>
 
 #include "error_codes.h"
 
-/* Forward declaration of spdlog logger */
+/* Forward declaration for template header */
 namespace spdlog {
+namespace level {
+enum level_enum : int;
+}
+struct source_loc;
 class logger;
 }
 
@@ -247,3 +252,6 @@ class Logger {
 
 } /* namespace logger */
 } /* namespace vsn */
+
+// Include template implementations
+#include "vsnlogger/logger.inl"

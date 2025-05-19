@@ -92,6 +92,7 @@ write_basic_package_version_file(
     COMPATIBILITY SameMajorVersion
 )
 
+# Install CMake configuration files
 install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/vsnlogger-config.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/vsnlogger-config-version.cmake
